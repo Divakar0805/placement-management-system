@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Students</title>
+    <link rel="stylesheet" href="css/admin-student.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="top-bar">
+        <h1>All Students</h1>
+        <div class="top-controls">
+            <input type="text" id="searchInput" placeholder="Search Student" onkeyup="searchStudent()">
+            <button class="back-btn" onclick="goBack()">← Back</button>
+        </div>
+        <h2 id="totalStudents"
+            class="student-count">
+        </h2>
+    </div>
+    <div class="table-scroll">
+        <div id="studentData"></div>
+    </div>
+</div>
+<script>
+    function loadStudents() {
+        fetch("http://localhost:8081/students/all")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("totalStudents").innerHTML = "Total Students : " + data.length;
+                let output =
+                    "<table class='student-table'>"
+                    + "<tr>"
+                    + "<th>ID</th>"
+                    + "<th>Name</th>"
+                    + "<th>Email</th>"
+                    + "<th>Password</th>"
+                    + "<th>Degree</th>"
+                    + "<th>Department</th>"
+                    + "<th>College</th>"
+                    + "<th>Phone</th>"
+                    + "<th>Skills</th>"
+                    + "<th>CGPA</th>"
+                    + "<th>Year</th>"
+                    + "<th>Address</th>"
+                    + "<th>Gender</th>"
+                    + "<th>DOB</th>"
+                    + "<th>Placement Status</th>"
+                    + "<th>Update</th>"
+                    + "<th>Delete</th>"
+                    + "</tr>";
+                data.forEach(student => {
+                    output +=
+                        "<tr>"
+                        + "<td>"
+                        + student.id
+                        + "</td>"
+                        + "<td>"
+                        + student.name
+                        + "</td>"
+                        + "<td>"
+                        + student.email
+                        + "</td>"
+                        + "<td>"
+                        + student.password
+                        + "</td>"
+                        + "<td>"
+                        + student.degree
+                        + "</td>"
+                        + "<td>"
+                        + student.department
+                        + "</td>"
+                        + "<td>"
+                        + student.college
+                        + "</td>"
+                        + "<td>"
+                        + student.phoneNumber
+                        + "</td>"
+                        + "<td>"
+                        + student.skills
+                        + "</td>"
+                        + "<td>"
+                        + student.cgpa
+                        + "</td>"
+                        + "<td>"
+                        + student.year_Of_PassedOut
+                        + "</td>"
+                        + "<td>"
+                        + student.address
+                        + "</td>"
+                        + "<td>"
+                        + student.gender
+                        + "</td>"
+                        + "<td>"
+                        + student.dateOfBirth
+                        + "</td>"
+                        + "<td>"
+                        + student.placementStatus
+                        + "</td>"
+                        + "<td>"
+                        + "<button onclick='editStudent("
+                        + student.id
+                        + ", this)'>Update</button>"
+                        + "</td>"
+                        + "<td>"
+                        + "<button onclick='deleteStudent("
+                        + student.id
+                        + ")'>Delete</button>"
+                        + "</td>"
+                        + "</tr>";
+                });
+                output += "</table>";
+                document.getElementById("studentData").innerHTML = output;
+            });
+    }
+    loadStudents();
+    // SEARCH
+    function searchStudent() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let rows = document.querySelectorAll(".student-table tr");
+        rows.forEach((row, index) => {
+            if(index === 0) return;
+            let text = row.innerText.toLowerCase();
+            row.style.display = text.includes(input) ? "" : "none";
+        });
+    }
+    // DELETE
+    function deleteStudent(id) {
+        let result = confirm("Delete this student?");
+        if(result){
+            fetch(
+                "http://localhost:8081/students/delete/" + id,
+                {
+                    method: "DELETE"
+                })
+                .then(() => {
+                    alert("Student Deleted");
+                    loadStudents();
+                });
+        }
+    }
+    // BACK
+    function goBack(){
+        window.history.back();
+    }
+    // EDIT STUDENT
+    function editStudent(id, button){
+        let row = button.parentElement.parentElement;
+        let cells = row.getElementsByTagName("td");
+        cells[1].innerHTML = "<input type='text' value='" + cells[1].innerText + "'>";
+        cells[2].innerHTML = "<input type='text' value='" + cells[2].innerText + "'>";
+        cells[3].innerHTML = "<input type='text' value='" + cells[3].innerText + "'>";
+        cells[4].innerHTML = "<input type='text' value='" + cells[4].innerText + "'>";
+        cells[5].innerHTML = "<input type='text' value='" + cells[5].innerText + "'>";
+        cells[6].innerHTML = "<input type='text' value='" + cells[6].innerText + "'>";
+        cells[7].innerHTML = "<input type='text' value='" + cells[7].innerText + "'>";
+        cells[8].innerHTML = "<input type='text' value='" + cells[8].innerText + "'>";
+        cells[9].innerHTML = "<input type='text' value='" + cells[9].innerText + "'>";
+        cells[10].innerHTML = "<input type='text' value='" + cells[10].innerText + "'>";
+        cells[11].innerHTML = "<input type='text' value='" + cells[11].innerText + "'>";
+        cells[12].innerHTML = "<input type='text' value='" + cells[12].innerText + "'>";
+        cells[13].innerHTML = "<input type='date' value='" + cells[13].innerText + "'>";
+        // BUTTON CHANGE
+        button.innerText = "Save";
+        button.onclick = function(){
+            fetch(
+                "http://localhost:8081/students/update/" + id,
+                {
+                    method:"PUT",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        name: cells[1].querySelector("input").value,
+                        email: cells[2].querySelector("input").value,
+                        password: cells[3].querySelector("input").value,
+                        degree: cells[4].querySelector("input").value,
+                        department: cells[5].querySelector("input").value,
+                        college: cells[6].querySelector("input").value,
+                        phoneNumber: cells[7].querySelector("input").value,
+                        skills: cells[8].querySelector("input").value,
+                        cgpa: cells[9].querySelector("input").value,
+                        year_Of_PassedOut: cells[10].querySelector("input").value,
+                        address: cells[11].querySelector("input").value,
+                        gender: cells[12].querySelector("input").value,
+                        dateOfBirth: cells[13].querySelector("input").value
+                    })
+                })
+                .then(() => {
+                    alert("Student Updated");
+                    loadStudents();
+                });
+        };
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/admin-dashboard.css">
+</head>
+<body class="dashboard-body">
+<div class="dashboard-container">
+    <h1>Admin Dashboard</h1>
+    <p class="sub-text">Manage students, companies and applications</p>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-card">
+            <h2>Students</h2>
+            <p>Manage student details</p>
+            <button class="card-btn" onclick="window.location.href='admin-students.html'">Manage Students</button>
+        </div>
+        <div class="dashboard-card">
+            <h2>Companies</h2>
+            <p>View all companies</p>
+            <button class="card-btn" onclick="window.location.href='admin-companys.html'">View Companies</button>
+        </div>
+        <div class="dashboard-card">
+            <h2>Applications</h2>
+            <p>Manage applications</p>
+            <button class="card-btn" onclick="window.location.href='admin-applications.html'">Applications</button>
+        </div>
+    </div>
+    <div class="logout-box">
+        <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
+    </div>
+</div>
+<script>
+    "use strict";
+    (function () {
+        if (localStorage.getItem("adminLogin") == null) {
+            alert("Please Login First");
+            window.location.replace("admin-login.html");
+        }
+    })();
+    var pageReady = false;
+    history.pushState({ guard: true }, "", window.location.href);
+    window.addEventListener("popstate", function () {
+        if (!pageReady) return;
+        history.pushState({ guard: true }, "", window.location.href);
+        showLogoutModal("backbutton");
+    });
+    setTimeout(function () { pageReady = true; }, 300);
+    window.addEventListener("pageshow", function (e) {
+        if (e.persisted && localStorage.getItem("adminLogin") == null) {
+            window.location.replace("admin-login.html");
+        }
+    });
+    var modalHTML =
+        '<div id="modal-overlay">' +
+        '<div id="modal-box">' +
+        '<div class="modal-icon">🔒</div>' +
+        '<h3>Leave Dashboard?</h3>' +
+        '<p id="modal-message"></p>' +
+        '<div class="modal-actions">' +
+        '<button id="btn-stay">Stay</button>' +
+        '<button id="btn-logout">Logout</button>' +
+        '</div>' +
+        '</div>' +
+        '</div>';
+    document.body.insertAdjacentHTML("afterbegin", modalHTML);
+    var overlay   = document.getElementById("modal-overlay");
+    var btnStay   = document.getElementById("btn-stay");
+    var btnLogout = document.getElementById("btn-logout");
+    var modalMsg  = document.getElementById("modal-message");
+    function showLogoutModal(trigger) {
+        modalMsg.textContent = (trigger === "backbutton")
+            ? "You pressed the back button. Do you want to logout and return to the login page?"
+            : "Are you sure you want to logout from your account?";
+        overlay.classList.add("show");
+        btnLogout.focus();
+    }
+    function hideModal() {
+        overlay.classList.remove("show");
+    }
+    btnStay.addEventListener("click", hideModal);
+    btnLogout.addEventListener("click", performLogout);
+    overlay.addEventListener("click", function (e) {
+        if (e.target === overlay) hideModal();
+    });
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") hideModal();
+    });
+    function logoutAdmin() {
+        showLogoutModal("button");
+    }
+    function performLogout() {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.onpopstate = null;
+        history.replaceState(null, "", "admin-login.html");
+        window.location.replace("admin-login.html");
+    }
+</script>
+</body>
+</html>

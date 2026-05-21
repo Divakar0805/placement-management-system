@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Applications</title>
+    <link rel="stylesheet" href="css/company-applications.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <h1 id="companyTitle"></h1>
+    <button onclick="goBack()">Back</button>
+    <div id="studentApplications"></div>
+</div>
+<script>
+    let companyName = localStorage.getItem("selectedCompany");
+    document.getElementById("companyTitle").innerText = companyName + " Applications";
+    fetch("http://localhost:8081/applications/all")
+        .then(response => response.json())
+        .then(data => {
+            let output = "";
+            data.forEach(app => {
+                if(app.company.companyName === companyName){
+                    output +=
+                        "<div class='company-card'>"
+                        + "<h2>"
+                        + app.student.name
+                        + "</h2>"
+                        + "<p> "
+                        + app.student.email
+                        + "</p>"
+                        + "<p> "
+                        + app.student.degree
+                        + "</p>"
+                        + "<p> "
+                        + app.student.department
+                        + "</p>"
+                        + "<p> "
+                        + app.student.cgpa
+                        + "</p>"
+                        + "<p> "
+                        + app.student.phoneNumber
+                        + "</p>"
+                        + "<p> "
+                        + app.status
+                        + "</p>"
+                        + "<br>"
+                        + "<select id='status"
+                        + app.id +
+                        "'>"
+                        + "<option "
+                        + (app.status === 'PENDING'
+                            ? 'selected' : '')
+                        + ">PENDING</option>"
+                        + "<option "
+                        + (app.status === 'SHORTLISTED'
+                            ? 'selected' : '')
+                        + ">SHORTLISTED</option>"
+                        + "<option "
+                        + (app.status === 'SELECTED'
+                            ? 'selected' : '')
+                        + ">SELECTED</option>"
+                        + "<option "
+                        + (app.status === 'REJECTED'
+                            ? 'selected' : '')
+                        + ">REJECTED</option>"
+                        + "</select>"
+                        + "<br><br>"
+                        + "<button onclick='updateStatus("
+                        + app.id +
+                        ")'>Update Status</button>"
+                        + "</div>";
+                }
+            });
+            document.getElementById("studentApplications").innerHTML = output;
+        });
+    function updateStatus(applicationId) {
+
+        let status =
+            document.getElementById(
+                "status" + applicationId
+            ).value;
+
+        fetch(
+            "http://localhost:8081/applications/update-status/" + applicationId,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    status: status
+                })
+            }
+        )
+            .then(response => response.text())
+            .then(data => {
+                alert("Status Updated Successfully");
+                location.reload();
+            })
+            .catch(error => {
+                console.log(error);
+                alert("Error Updating Status");
+            });
+    }
+    function goBack(){
+        window.history.back();
+    }
+</script>
+</body>
+</html>

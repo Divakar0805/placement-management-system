@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Applications</title>
+    <link rel="stylesheet" href="css/admin-applications.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <h1>Applications</h1>
+
+    <div class="page-header">
+        <button class="back-btn" onclick="goBack()">← Back</button>
+        <input type="text" id="searchInput" placeholder="Search Company..." onkeyup="searchCompanies()"/>
+    </div>
+
+    <div id="applicationList"></div>
+</div>
+<script>
+
+    function loadApplications() {
+        fetch(
+            "http://localhost:8081/applications/all"
+        )
+            .then(response => response.json())
+            .then(data => {
+                let companyCounts = {};
+                data.forEach(app => {
+                    let companyName = app.company.companyName;
+                    if(companyCounts[companyName]) {
+                        companyCounts[companyName]++;
+                    }
+                    else {
+                        companyCounts[companyName] = 1;
+                    }
+                });
+                let output = "";
+                for(let companyName in companyCounts) {
+                    output +=
+                        "<div class='company-card'>"
+                        + "<h2>"
+                        + companyName
+                        + "</h2>"
+                        + "<p><strong>Applied Students:</strong> "
+                        + companyCounts[companyName]
+                        + "</p>"
+                        + "<button onclick=\"viewApplications('"
+                        + companyName +
+                        "')\">View Applications</button>"
+                        + "</div>";
+                }
+                document.getElementById("applicationList").innerHTML = output;
+            });
+    }
+    loadApplications();
+    function viewApplications(companyName) {
+        localStorage.setItem("selectedCompany", companyName);
+        window.location.href = "company-applications.html";
+    }
+    function goBack(){
+        window.history.back();
+    }
+    function searchCompanies() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll(".company-card");
+        cards.forEach(card => {
+            let text = card.textContent.toLowerCase();
+            if(text.includes(input)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
+</body>
+</html>

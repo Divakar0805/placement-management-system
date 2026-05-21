@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Companies</title>
+    <link rel="stylesheet" href="css/companies.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="top-bar">
+        <h1>Available Companies</h1>
+        <div>
+            <button onclick="goBack()">← Back</button>
+        </div>
+    </div>
+    <input type="text" id="searchInput" placeholder="Search AnyThing..." onkeyup="searchCompanies()">
+    <br><br>
+    <div id="companyData"></div>
+</div>
+<script>
+    function loadCompanies() {
+        let studentEmail = localStorage.getItem("studentEmail");
+        fetch("http://localhost:8081/company/all")
+            .then(response => response.json())
+            .then(data => {
+                fetch("http://localhost:8081/applications/all")
+                    .then(response => response.json())
+                    .then(applications => {
+                        let output = "";
+                        data.forEach(company => {
+                            company.applied = false;
+                            applications.forEach(app => {
+                                if(
+                                    app.company.id === company.id &&
+                                    app.student.email === studentEmail
+                                ) {
+                                    company.applied = true;
+                                }
+                            });
+                            output +=
+                                "<div class='company-card'>"
+                                + "<h2>"
+                                + company.companyName
+                                + "</h2>"
+                                + "<p><strong>Role:</strong> "
+                                + company.role
+                                + "</p>"
+                                + "<p><strong>Package:</strong> "
+                                + company.packageAmount
+                                + " LPA</p>"
+                                + "<p><strong>Location:</strong> "
+                                + company.location
+                                + "</p>"
+                                + "<p><strong>Eligibility:</strong> "
+                                + company.eligibility
+                                + "</p>"
+                                + "<p><strong>Job Type:</strong> "
+                                + company.jobType
+                                + "</p>"
+                                + "<p><strong>Experience:</strong> "
+                                + company.experience
+                                + "</p>"
+                                + "<p><strong>Skills Required:</strong> "
+                                + company.skillsRequired
+                                + "</p>"
+                                + "<p><strong>Bond:</strong> "
+                                + company.bond
+                                + "</p>"
+                                + "<p><strong>Interview Mode:</strong> "
+                                + company.interviewMode
+                                + "</p>"
+                                + "<p><strong>Interview Date:</strong> "
+                                + company.interviewDate
+                                + "</p>"
+                                + "<p><strong>Last Date:</strong> "
+                                + company.lastDateToApply
+                                + "</p>"
+                                + "<p><strong>Vacancies:</strong> "
+                                + company.vacancies
+                                + "</p>"
+                                + (
+                                    company.applied
+                                        ?
+                                        "<button class='applied-btn' disabled>Already Applied</button>"
+                                        :
+                                        "<button onclick='applyCompany("
+                                        + company.id +
+                                        ")'>Apply</button>"
+                                )
+                                + "</div>";
+                        });
+                        document.getElementById("companyData").innerHTML = output;
+                    });
+            });
+    }
+    loadCompanies();
+    function applyCompany(companyId) {
+        let email = localStorage.getItem("studentEmail");
+        fetch("http://localhost:8081/students/all")
+            .then(response => response.json())
+            .then(data => {
+                let student = data.find(s => s.email === email);
+                fetch(
+                    "http://localhost:8081/applications/apply",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:JSON.stringify({
+                            student:{
+                                id:student.id
+                            },
+                            company:{
+                                id:companyId
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(
+                            "Applied Successfully"
+                        );
+                        loadCompanies();
+                    });
+            });
+    }
+    function goBack(){
+        window.history.back();
+    }
+    function searchCompanies(){
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll(".company-card");
+        cards.forEach(card => {
+            let text = card.textContent.toLowerCase();
+            if(text.includes(input)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
+</body>
+</html>

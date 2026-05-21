@@ -1,0 +1,422 @@
+/* ============================================
+   PLACEMENT MANAGEMENT SYSTEM — EARTHY WARM
+   Companies · Card grid layout
+   Dark brown-black · amber-gold · DM Serif
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── TOKENS ── */
+:root {
+    --bg-deep:      #1a1208;
+    --bg-panel-l:   #241808;
+    --bg-card:      #1f1508;
+    --border-col:   #3d2a10;
+    --accent-gold:  #c87a20;
+    --accent-light: #e8a830;
+    --text-heading: #f0d8a8;
+    --text-body:    #a07848;
+    --text-muted:   #4a3520;
+    --text-input:   #f0d8a8;
+    --input-bg:     rgba(255,255,255,0.03);
+    --radius:       4px;
+    --transition:   0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── BODY ── */
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 52px 16px 80px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+
+/* ── VIGNETTE ── */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+}
+
+/* ── DASHBOARD CONTAINER ── */
+.dashboard-container {
+    width: 100%;
+    max-width: 1100px;
+    position: relative;
+    z-index: 1;
+    animation: rise 0.55s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 10px;
+}
+
+/* ── PAGE HEADING ── */
+.top-bar h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 400;
+    color: var(--text-heading);
+    line-height: 1.1;
+    position: relative;
+}
+
+.top-bar h1::after {
+    content: '';
+    display: block;
+    width: 44px;
+    height: 2px;
+    background: var(--accent-gold);
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+/* ── TOP-BAR BUTTONS GROUP ── */
+.top-bar > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ── SHARED BUTTON BASE ── */
+.top-bar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: var(--radius);
+
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+/* ── ADD COMPANY BUTTON — filled gold ── */
+.top-bar button:first-child {
+    background: linear-gradient(135deg, rgba(200,122,32,0.18), rgba(200,122,32,0.07));
+    border: 1px solid var(--accent-gold);
+    color: var(--accent-gold);
+}
+
+.top-bar button:first-child::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.07) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.45s ease;
+    pointer-events: none;
+}
+
+.top-bar button:first-child:hover {
+    background: var(--accent-gold);
+    color: #1a1208;
+    box-shadow: 0 0 20px rgba(200,122,32,0.3), 0 4px 12px rgba(0,0,0,0.28);
+    transform: translateY(-1px);
+}
+
+.top-bar button:first-child:hover::after {
+    transform: translateX(100%);
+}
+
+.top-bar button:first-child:active {
+    transform: translateY(0);
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+    color: #1a1208;
+    box-shadow: none;
+}
+
+/* ── BACK BUTTON — ghost ── */
+.top-bar button:last-child {
+    background: transparent;
+    border: 1px solid var(--border-col);
+    color: var(--text-body);
+}
+
+.top-bar button:last-child:hover {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+    background: rgba(200,122,32,0.07);
+    transform: translateX(-3px);
+}
+
+.top-bar button:last-child:active {
+    transform: translateX(0);
+    background: rgba(200,122,32,0.13);
+}
+
+/* ── SEARCH INPUT ── */
+#searchInput {
+    display: block;
+    width: 100%;
+    margin-top: 28px;
+    padding: 12px 16px;
+
+    background: var(--input-bg);
+    border: 1px solid var(--border-col);
+    border-radius: var(--radius);
+
+    color: var(--text-input);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.87rem;
+
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+#searchInput::placeholder {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+#searchInput:hover:not(:focus) {
+    border-color: #5a3e1a;
+}
+
+#searchInput:focus {
+    border-color: var(--accent-gold);
+    background: rgba(200,122,32,0.05);
+    box-shadow: 0 0 0 3px rgba(200,122,32,0.12);
+}
+
+/* ── COMPANY DATA GRID ── */
+#companyData {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+    margin-top: 8px;
+}
+
+/* ── COMPANY CARD ── */
+.company-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-col);
+    border-radius: 8px;
+    padding: 26px 24px 22px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    transition: border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+    animation: rise 0.45s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+/* Gold top accent bar */
+.company-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-gold), transparent 70%);
+    opacity: 0.5;
+    transition: opacity var(--transition);
+}
+
+/* Subtle corner glow */
+.company-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; right: -30px;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle, rgba(200,122,32,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    transition: opacity var(--transition);
+}
+
+.company-card:hover {
+    border-color: rgba(200,122,32,0.4);
+    box-shadow: 0 0 28px rgba(200,122,32,0.1), 0 6px 20px rgba(0,0,0,0.35);
+    transform: translateY(-3px);
+}
+
+.company-card:hover::before {
+    opacity: 0.85;
+}
+
+/* ── CARD — COMPANY NAME ── */
+.company-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.22rem;
+    font-weight: 400;
+    color: var(--text-heading);
+    line-height: 1.2;
+    margin-bottom: 14px;
+    padding-right: 8px;
+}
+
+/* ── CARD — INFO ROWS ── */
+.company-card p {
+    font-size: 0.82rem;
+    color: var(--text-body);
+    line-height: 1.5;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(61,42,16,0.45);
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.company-card p:last-of-type {
+    border-bottom: none;
+    margin-bottom: 4px;
+}
+
+.company-card p strong {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Package value — gold highlight */
+.company-card p:nth-of-type(2) {
+    color: var(--accent-gold);
+    font-weight: 500;
+}
+
+/* ── CARD — APPLY BUTTON ── */
+.company-card button {
+    margin-top: 16px;
+    width: 100%;
+    padding: 11px;
+    position: relative;
+    overflow: hidden;
+
+    background: linear-gradient(135deg, rgba(200,122,32,0.14), rgba(200,122,32,0.05));
+    border: 1px solid var(--accent-gold);
+    border-radius: var(--radius);
+
+    color: var(--accent-gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    transition: background var(--transition),
+    color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition),
+    letter-spacing var(--transition);
+}
+
+/* Shimmer sweep */
+.company-card button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.07) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.45s ease;
+    pointer-events: none;
+}
+
+.company-card button:hover {
+    background: var(--accent-gold);
+    color: #1a1208;
+    box-shadow: 0 0 20px rgba(200,122,32,0.3), 0 4px 12px rgba(0,0,0,0.25);
+    transform: translateY(-1px);
+    letter-spacing: 0.19em;
+}
+
+.company-card button:hover::after {
+    transform: translateX(100%);
+}
+
+.company-card button:active {
+    transform: translateY(0);
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+    color: #1a1208;
+    box-shadow: none;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track {
+    background: var(--bg-deep);
+    border-left: 1px solid var(--border-col);
+}
+::-webkit-scrollbar-thumb {
+    background: #3d2a10;
+    border-radius: 4px;
+    border: 2px solid var(--bg-deep);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+::-webkit-scrollbar-corner { background: var(--bg-deep); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+    body {
+        padding: 36px 16px 64px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #companyData {
+        grid-template-columns: 1fr;
+    }
+}

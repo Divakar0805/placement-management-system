@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin-Companies</title>
+    <link rel="stylesheet" href="css/admin-companys.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <div class="top-bar">
+        <h1>Available Companies</h1>
+        <div>
+            <button onclick="window.location.href='add-company.html'">Add Company</button>
+            <button onclick="goBack()">← Back</button>
+        </div>
+    </div>
+    <!-- SEARCH INPUT -->
+    <input type="text" id="searchInput" placeholder="Search Company, Role, Skills, Location..." onkeyup="searchCompanies()">
+    <br><br>
+    <div id="companyData"></div>
+</div>
+<script>
+    function loadCompanies() {
+        fetch("http://localhost:8081/company/all")
+            .then(response => response.json())
+            .then(data => {
+                let output = "";
+                data.forEach(company => {
+                    output +=
+                        "<div class='company-card'>"
+                        + "<h2>"
+                        + company.companyName
+                        + "</h2>"
+                        + "<p><strong>Role:</strong> "
+                        + company.role
+                        + "</p>"
+                        + "<p><strong>Package:</strong> "
+                        + company.packageAmount
+                        + " LPA</p>"
+                        + "<p><strong>Location:</strong> "
+                        + company.location
+                        + "</p>"
+                        + "<p><strong>Eligibility:</strong> "
+                        + company.eligibility
+                        + "</p>"
+                        + "<p><strong>Job Type:</strong> "
+                        + company.jobType
+                        + "</p>"
+                        + "<p><strong>Experience:</strong> "
+                        + company.experience
+                        + "</p>"
+                        + "<p><strong>Skills Required:</strong> "
+                        + company.skillsRequired
+                        + "</p>"
+                        + "<p><strong>Bond:</strong> "
+                        + company.bond
+                        + "</p>"
+                        + "<p><strong>Interview Mode:</strong> "
+                        + company.interviewMode
+                        + "</p>"
+                        + "<p><strong>Interview Date:</strong> "
+                        + company.interviewDate
+                        + "</p>"
+                        + "<p><strong>Last Date:</strong> "
+                        + company.lastDateToApply
+                        + "</p>"
+                        + "<p><strong>Vacancies:</strong> "
+                        + company.vacancies
+                        + "</p>"
+                        + "<p><strong>Total Applied Students:</strong> "
+                        + company.appliedStudentsCount
+                        + "</p>"
+                        + "</div>";
+                });
+                document.getElementById("companyData").innerHTML = output;
+            });
+    }
+    loadCompanies();
+    function applyCompany(companyId) {
+        let email = localStorage.getItem("studentEmail");
+        fetch("http://localhost:8081/students/all")
+            .then(response => response.json())
+            .then(data => {
+                let student = data.find(s => s.email === email);
+                fetch(
+                    "http://localhost:8081/applications/apply",
+                    {
+                        method:"POST",
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body:JSON.stringify({
+                            student:{
+                                id:student.id
+                            },
+                            company:{
+                                id:companyId
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert("Applied Successfully");
+                    });
+            });
+    }
+    function goBack(){
+        window.history.back();
+    }
+    // SEARCH FUNCTION
+    function searchCompanies(){
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll(".company-card");
+        cards.forEach(card => {
+            let text = card.textContent.toLowerCase();
+            if(text.includes(input)){
+                card.style.display = "block";
+            }else{
+                card.style.display = "none";
+            }
+        });
+    }
+</script>
+</body>
+</html>

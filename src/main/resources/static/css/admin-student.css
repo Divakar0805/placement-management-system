@@ -1,0 +1,473 @@
+/* ============================================
+   PLACEMENT MANAGEMENT SYSTEM — EARTHY WARM
+   Admin Students · Wide table · inline edit
+   Dark brown-black · amber-gold · DM Serif
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── TOKENS ── */
+:root {
+    --bg-deep:      #1a1208;
+    --bg-panel-l:   #241808;
+    --border-col:   #3d2a10;
+    --accent-gold:  #c87a20;
+    --accent-light: #e8a830;
+    --text-heading: #f0d8a8;
+    --text-body:    #a07848;
+    --text-muted:   #4a3520;
+    --text-input:   #f0d8a8;
+    --input-bg:     rgba(255,255,255,0.03);
+    --danger:       #c0392b;
+    --danger-hover: #e74c3c;
+    --radius:       4px;
+    --transition:   0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── BODY ── */
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    min-height: 100vh;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+
+/* ── VIGNETTE ── */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ── DASHBOARD CONTAINER ── */
+.dashboard-container {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 52px 48px 80px;
+    position: relative;
+    z-index: 1;
+    animation: rise 0.55s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+@keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+/* ── PAGE HEADING ── */
+.top-bar h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 400;
+    color: var(--text-heading);
+    line-height: 1.1;
+}
+
+.top-bar h1::after {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 2px;
+    background: var(--accent-gold);
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+/* ── TOP CONTROLS ── */
+.top-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ── SEARCH INPUT ── */
+.top-controls input[type="text"],
+#searchInput {
+    padding: 10px 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-col);
+    border-radius: var(--radius);
+    color: var(--text-input);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.87rem;
+    outline: none;
+    width: 240px;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+.top-controls input[type="text"]::placeholder,
+#searchInput::placeholder {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.top-controls input[type="text"]:hover:not(:focus),
+#searchInput:hover:not(:focus) {
+    border-color: #5a3e1a;
+}
+
+.top-controls input[type="text"]:focus,
+#searchInput:focus {
+    border-color: var(--accent-gold);
+    background: rgba(200,122,32,0.05);
+    box-shadow: 0 0 0 3px rgba(200,122,32,0.12);
+}
+
+/* ── BACK BUTTON ── */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+
+    background: transparent;
+    border: 1px solid var(--border-col);
+    border-radius: var(--radius);
+
+    color: var(--text-body);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+
+    transition: color var(--transition),
+    border-color var(--transition),
+    background var(--transition),
+    transform var(--transition);
+}
+
+.back-btn:hover {
+    color: var(--accent-gold);
+    border-color: var(--accent-gold);
+    background: rgba(200,122,32,0.07);
+    transform: translateX(-3px);
+}
+
+.back-btn:active {
+    transform: translateX(0);
+    background: rgba(200,122,32,0.13);
+}
+
+/* ── TOTAL STUDENTS BADGE ── */
+.student-count {
+
+    position: absolute;
+
+    top: 120px;
+
+    right: 60px;
+
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    color: var(--accent-gold);
+
+}
+
+/* ── TABLE SCROLL WRAPPER ── */
+.table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 72vh;
+    border: 1px solid var(--border-col);
+    border-radius: 8px;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+}
+
+/* Gold top accent line on the scroll wrapper */
+.table-scroll::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-gold), transparent 65%);
+    opacity: 0.55;
+    z-index: 3;
+    pointer-events: none;
+}
+
+/* ── TABLE ── */
+.student-table {
+    width: 100%;
+    min-width: 1600px;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+/* ── STICKY HEADER ── */
+.student-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 13px 16px;
+    text-align: left;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--bg-panel-l);
+    border-bottom: 1px solid var(--border-col);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* First header col accent */
+.student-table th:first-child {
+    color: rgba(200,122,32,0.55);
+}
+
+/* ── BODY ROWS ── */
+.student-table tbody tr {
+    border-bottom: 1px solid rgba(61,42,16,0.5);
+    transition: background var(--transition);
+}
+
+.student-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.student-table tbody tr:hover td {
+    background: rgba(200,122,32,0.04);
+}
+
+.student-table td {
+    padding: 11px 16px;
+    color: var(--text-body);
+    vertical-align: middle;
+    white-space: nowrap;
+    background: var(--bg-deep);
+    transition: background var(--transition);
+}
+
+/* ID column */
+.student-table td:first-child {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+/* Name column */
+.student-table td:nth-child(2) {
+    color: var(--text-heading);
+    font-weight: 500;
+}
+
+/* CGPA column */
+.student-table td:nth-child(9) {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent-light);
+}
+
+/* ── INLINE EDIT INPUTS (injected by JS) ── */
+.student-table td input[type="text"],
+.student-table td input[type="date"] {
+    padding: 6px 10px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-col);
+    border-radius: var(--radius);
+    color: var(--text-input);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    outline: none;
+    width: 130px;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color var(--transition),
+    background var(--transition),
+    box-shadow var(--transition);
+}
+
+.student-table td input[type="text"]:focus,
+.student-table td input[type="date"]:focus {
+    border-color: var(--accent-gold);
+    background: rgba(200,122,32,0.05);
+    box-shadow: 0 0 0 2px rgba(200,122,32,0.12);
+}
+
+.student-table td input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.45) sepia(1) saturate(2) hue-rotate(5deg);
+    opacity: 0.55;
+    cursor: pointer;
+    transition: opacity var(--transition);
+}
+
+.student-table td input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* ── UPDATE BUTTON (Save state too) ── */
+.student-table td:nth-last-child(2) button {
+    padding: 6px 14px;
+    border: 1px solid var(--accent-gold);
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(200,122,32,0.12), rgba(200,122,32,0.04));
+    color: var(--accent-gold);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--transition),
+    color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+.student-table td:nth-last-child(2) button::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.07) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    pointer-events: none;
+}
+
+.student-table td:nth-last-child(2) button:hover {
+    background: var(--accent-gold);
+    color: #1a1208;
+    box-shadow: 0 0 14px rgba(200,122,32,0.28);
+    transform: translateY(-1px);
+}
+
+.student-table td:nth-last-child(2) button:hover::after {
+    transform: translateX(100%);
+}
+
+.student-table td:nth-last-child(2) button:active {
+    transform: translateY(0);
+    background: var(--accent-light);
+    border-color: var(--accent-light);
+    color: #1a1208;
+    box-shadow: none;
+}
+
+/* ── DELETE BUTTON ── */
+.student-table td:last-child button {
+    padding: 6px 14px;
+    border: 1px solid var(--border-col);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color var(--transition),
+    color var(--transition),
+    background var(--transition),
+    transform var(--transition);
+}
+
+.student-table td:last-child button:hover {
+    border-color: var(--danger-hover);
+    color: var(--danger-hover);
+    background: rgba(231,76,60,0.08);
+    transform: translateY(-1px);
+}
+
+.student-table td:last-child button:active {
+    transform: translateY(0);
+    background: rgba(231,76,60,0.14);
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track {
+    background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-col);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+::-webkit-scrollbar-corner { background: var(--bg-deep); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+    .top-controls input[type="text"],
+    #searchInput {
+        width: 170px;
+    }
+}
+
+@media (max-width: 680px) {
+    .dashboard-container {
+        padding: 36px 16px 60px;
+    }
+
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .top-controls {
+        width: 100%;
+    }
+
+    .top-controls input[type="text"],
+    #searchInput {
+        flex: 1;
+        width: auto;
+        min-width: 120px;
+    }
+
+    .table-scroll {
+        max-height: 60vh;
+    }
+}

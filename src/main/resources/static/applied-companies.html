@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Applied Companies</title>
+  <link rel="stylesheet" href="css/applied-companies.css">
+</head>
+<body>
+<div class="container">
+  <button class="back-btn" onclick="goBack()">← Back</button>
+  <h1>Applied Companies</h1>
+  <input type="text" id="searchInput" placeholder="Search Company, Role, Location..." onkeyup="searchCompanies()">
+  <br><br>
+  <table id="companiesTable">
+    <thead>
+    <tr>
+      <th>Company Name</th>
+      <th>Role</th>
+      <th>Location</th>
+      <th>Package</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+    </tbody>
+  </table>
+  <p class="no-data" id="noData" style="display:none;">
+    No Applied Companies Found
+  </p>
+</div>
+<script>
+  function goBack(){
+    window.history.back();
+  }
+  if(localStorage.getItem("studentEmail") == null){
+    alert(
+            "Please Login First"
+    );
+    window.location.replace("index.html");
+  }
+  let email = localStorage.getItem("studentEmail");
+  fetch(
+          "http://localhost:8081/students/all"
+  )
+          .then(response => response.json())
+          .then(students => {
+            let student = students.find(s => s.email === email);
+            fetch(
+                    "http://localhost:8081/applications/student/"
+                    + student.id
+            )
+                    .then(response => response.json())
+                    .then(data => {
+                      let tableBody = document.getElementById("tableBody");
+                      if(data.length === 0){
+                        document.getElementById("companiesTable").style.display = "none";
+                        document.getElementById("noData").style.display = "block";
+                      }else{
+                        data.forEach(application => {
+                          let row = document.createElement("tr");
+                          row.innerHTML = `
+<td>${application.company.companyName}</td>
+<td>${application.company.role}</td>
+<td>${application.company.location}</td>
+<td>${application.company.packageAmount}</td>
+<td>${application.status}</td>
+`;
+                          tableBody.appendChild(row);
+                        });
+                      }
+                    })
+                    .catch(error => {
+                      console.log(error);
+                      alert(
+                              "Error Loading Applied Companies"
+                      );
+                    });
+          });
+  function searchCompanies(){
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let table = document.getElementById("companiesTable");
+    let tr = table.getElementsByTagName("tr");
+    for(let i = 1; i < tr.length; i++){
+      let rowText = tr[i].textContent.toLowerCase();
+      if(rowText.includes(input)){
+        tr[i].style.display = "";
+      }else{
+        tr[i].style.display = "none";
+      }
+    }
+  }
+</script>
+
+</body>
+</html>

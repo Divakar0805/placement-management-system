@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Company</title>
+    <link rel="stylesheet" href="css/add-company.css">
+</head>
+<body>
+<div class="dashboard-container">
+    <h1>Add Company</h1>
+    <div class="company-form">
+        <input type="text" id="companyName" placeholder="Company Name">
+        <input type="text" id="role" placeholder="Role">
+        <input type="number" id="packageAmount" placeholder="Package">
+        <input type="text" id="location" placeholder="Location">
+        <input type="text" id="eligibility" placeholder="Eligibility">
+        <input type="text" id="jobType" placeholder="Job Type">
+        <input type="text" id="experience" placeholder="Experience">
+        <input type="text" id="skillsRequired" placeholder="Skills Required">
+        <input type="text" id="bond" placeholder="Bond">
+        <input type="text" id="interviewMode" placeholder="Interview Mode">
+        <input type="text" id="interviewDate" placeholder="Interview Date">
+        <input type="text" id="lastDateToApply" placeholder="Last Date To Apply">
+        <input type="number" id="vacancies" placeholder="Vacancies">
+        <button onclick="addCompany()">Save Company</button>
+        <button onclick="window.location.href='companies.html'">Back</button>
+    </div>
+</div>
+<script>
+    function addCompany() {
+        fetch(
+            "http://localhost:8081/company/add",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+                body:JSON.stringify({
+                    companyName: document.getElementById("companyName").value,
+                    role: document.getElementById("role").value,
+                    packageAmount: document.getElementById("packageAmount").value,
+                    location: document.getElementById("location").value,
+                    eligibility: document.getElementById("eligibility").value,
+                    jobType: document.getElementById("jobType").value,
+                    experience: document.getElementById("experience").value,
+                    skillsRequired: document.getElementById("skillsRequired").value,
+                    bond: document.getElementById("bond").value,
+                    interviewMode: document.getElementById("interviewMode").value,
+                    interviewDate: document.getElementById("interviewDate").value,
+                    lastDateToApply: document.getElementById("lastDateToApply").value,
+                    vacancies: document.getElementById("vacancies").value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("Company Added");
+                window.location.href = "companies.html";
+            });
+    }
+</script>
+</body>
+</html>

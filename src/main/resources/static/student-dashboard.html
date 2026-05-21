@@ -1,0 +1,188 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Student Dashboard</title>
+        <link rel="stylesheet" href="css/student-dashboard.css">
+    </head>
+    <body>
+    <div class="main-container">
+        <!-- LEFT PANEL -->
+        <div class="left-panel">
+            <h1>Student Details</h1>
+            <div class="student-card">
+                <h2 id="studentName"></h2>
+                <p><b>Email:</b><span id="email"></span></p>
+                <p><b>Degree:</b><span id="degree"></span></p>
+                <p><b>Department:</b><span id="department"></span></p>
+                <p><b>College:</b><span id="college"></span></p>
+                <p><b>Phone:</b><span id="phone"></span></p>
+                <p><b>Skills:</b><span id="skills"></span></p>
+                <p><b>CGPA:</b><span id="cgpa"></span></p>
+                <p><b>Year-Of-PassedOut:</b><span id="year"></span></p>
+                <p><b>Gender:</b><span id="gender"></span></p>
+                <p><b>DOB:</b><span id="dob"></span></p>
+                <p><b>Address:</b><span id="address"></span></p>
+            </div>
+        </div>
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+            <h1>Dashboard</h1>
+            <div class="dashboard-buttons">
+                <button onclick="window.location.href='companies.html'">View Companies</button>
+                <button onclick="window.location.href='applied-companies.html'">Applied Companies</button>
+                <button onclick="window.location.href='update-profile.html'">Update Profile</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        "use strict";
+
+        /* ═══════════════════════════════════════════
+           AUTH GUARD
+        ═══════════════════════════════════════════ */
+        (function () {
+            if (!localStorage.getItem("studentEmail")) {
+                alert("Please Login First");
+                window.location.replace("index.html");
+            }
+        })();
+
+        /* ═══════════════════════════════════════════
+           HISTORY GUARD — push ONE state
+           (Modal is non-blocking so Chrome will NOT
+            drain the stack unlike confirm())
+        ═══════════════════════════════════════════ */
+        history.pushState({ guard: true }, "", window.location.href);
+
+        window.addEventListener("popstate", function () {
+            // Push state back immediately — user stays on this page
+            history.pushState({ guard: true }, "", window.location.href);
+            // Show custom modal instead of confirm()
+            showLogoutModal("backbutton");
+        });
+
+        /* ═══════════════════════════════════════════
+           BFCACHE GUARD
+        ═══════════════════════════════════════════ */
+        window.addEventListener("pageshow", function (e) {
+            if (e.persisted && !localStorage.getItem("studentEmail")) {
+                window.location.replace("index.html");
+            }
+        });
+
+        /* ═══════════════════════════════════════════
+           INJECT MODAL INTO PAGE
+        ═══════════════════════════════════════════ */
+        var modalHTML =
+            '<div id="modal-overlay">' +
+            '<div id="modal-box">' +
+            '<div class="modal-icon">🔒</div>' +
+            '<h3>Leave Dashboard?</h3>' +
+            '<p id="modal-message"></p>' +
+            '<div class="modal-actions">' +
+            '<button id="btn-stay">Stay</button>' +
+            '<button id="btn-logout">Logout</button>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        document.body.insertAdjacentHTML("afterbegin", modalHTML);
+
+        var overlay   = document.getElementById("modal-overlay");
+        var btnStay   = document.getElementById("btn-stay");
+        var btnLogout = document.getElementById("btn-logout");
+        var modalMsg  = document.getElementById("modal-message");
+
+        /* ═══════════════════════════════════════════
+           MODAL FUNCTIONS
+        ═══════════════════════════════════════════ */
+        function showLogoutModal(trigger) {
+            modalMsg.textContent = (trigger === "backbutton")
+                ? "You pressed the back button. Do you want to logout and return to the login page?"
+                : "Are you sure you want to logout from your account?";
+            overlay.classList.add("show");
+            btnLogout.focus();
+        }
+
+        function hideModal() {
+            overlay.classList.remove("show");
+        }
+
+        // Stay button
+        btnStay.addEventListener("click", hideModal);
+
+        // Logout button
+        btnLogout.addEventListener("click", performLogout);
+
+        // Click outside modal box to close
+        overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) hideModal();
+        });
+
+        // Escape key to close
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") hideModal();
+        });
+
+        /* ═══════════════════════════════════════════
+           LOAD STUDENT DATA
+        ═══════════════════════════════════════════ */
+        var studentEmail = localStorage.getItem("studentEmail");
+
+        fetch("http://localhost:8081/students/email/" + encodeURIComponent(studentEmail))
+            .then(function (res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(function (s) {
+                document.getElementById("studentName").innerText = s.name              || "";
+                document.getElementById("email").innerText       = s.email             || "";
+                document.getElementById("degree").innerText      = s.degree            || "";
+                document.getElementById("department").innerText  = s.department        || "";
+                document.getElementById("college").innerText     = s.college           || "";
+                document.getElementById("phone").innerText       = s.phoneNumber       || "";
+                document.getElementById("skills").innerText      = s.skills            || "";
+                document.getElementById("cgpa").innerText        = s.cgpa              || "";
+                document.getElementById("year").innerText        = s.year_Of_PassedOut || "";
+                document.getElementById("gender").innerText      = s.gender            || "";
+                document.getElementById("dob").innerText         = s.dateOfBirth       || "";
+                document.getElementById("address").innerText     = s.address           || "";
+            })
+            .catch(function (err) {
+                console.error("Failed to load student data:", err);
+            });
+
+        /* ═══════════════════════════════════════════
+           LOGOUT BUTTON (your existing onclick)
+        ═══════════════════════════════════════════ */
+        function logout() {
+            showLogoutModal("button");
+        }
+
+        /* ═══════════════════════════════════════════
+           PERFORM LOGOUT
+        ═══════════════════════════════════════════ */
+        function performLogout() {
+            localStorage.clear();
+            sessionStorage.clear();
+
+            document.cookie.split(";").forEach(function (c) {
+                var name = c.split("=")[0].trim();
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/";
+            });
+
+            // Kill any further popstate events
+            window.onpopstate = null;
+
+            // Overwrite dashboard history entry THEN navigate
+            history.replaceState(null, "", "index.html");
+            window.location.replace("index.html");
+        }
+
+    </script>
+    </body>
+    </html>

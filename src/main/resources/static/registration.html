@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration</title>
+    <link rel="stylesheet" href="css/registration.css">
+</head>
+<body>
+<div class="register-container">
+    <div class="register-card">
+        <h1>Student Registration</h1>
+        <p class="sub-text">Create your placement portal account</p>
+        <div class="form-grid">
+
+            <div class="input-box">
+                <label>Full Name</label>
+                <input type="text" id="name" placeholder="Enter Full Name">
+            </div>
+            <div class="input-box">
+                <label>Email Address</label>
+                <input type="email" id="email" placeholder="Enter Email">
+            </div>
+            <div class="input-box">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Enter Password">
+            </div>
+            <div class="input-box">
+                <label>Degree</label>
+                <input type="text" id="degree" placeholder="Enter Degree">
+            </div>
+            <div class="input-box">
+                <label>Department</label>
+                <input type="text" id="department" placeholder="Enter Department">
+            </div>
+            <div class="input-box">
+                <label>College Name</label>
+                <input type="text" id="college" placeholder="Enter College Name">
+            </div>
+            <div class="input-box">
+                <label>Phone Number</label>
+                <input type="text" id="phoneNumber" placeholder="Enter Phone Number">
+            </div>
+            <div class="input-box">
+                <label>Skills</label>
+                <input type="text" id="skills" placeholder="Enter Skills">
+            </div>
+            <div class="input-box">
+                <label>Gender</label>
+                <input type="text" id="gender" placeholder="Enter Gender">
+            </div>
+            <div class="input-box">
+                <label>Date Of Birth</label>
+                <input type="date" id="dob">
+            </div>
+            <div class="input-box">
+                <label>CGPA</label>
+                <input type="number" id="cgpa" placeholder="Enter CGPA">
+            </div>
+            <div class="input-box">
+                <label>Year Of Passed Out</label>
+                <input type="number" id="year" placeholder="Enter Year">
+            </div>
+        </div>
+        <div class="input-box address-box">
+            <label>Address</label>
+            <textarea id="address" placeholder="Enter Address"></textarea>
+        </div>
+        <button onclick="registerStudent()">Register</button>
+        <p class="login-text">Already have an account? <a href="index.html">Login</a></p>
+    </div>
+</div>
+<script>
+    function registerStudent() {
+
+        let studentName = document.getElementById("name").value;
+        let studentEmail = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let degree = document.getElementById("degree").value;
+        let department = document.getElementById("department").value;
+        let college = document.getElementById("college").value;
+        let phoneNumber = document.getElementById("phoneNumber").value;
+        let skills = document.getElementById("skills").value;
+        let gender = document.getElementById("gender").value;
+        let dob = document.getElementById("dob").value;
+        let cgpa = document.getElementById("cgpa").value;
+        let year = document.getElementById("year").value;
+        let address = document.getElementById("address").value;
+
+        if(
+            studentName === "" ||
+            studentEmail === "" ||
+            password === "" ||
+            degree === "" ||
+            department === "" ||
+            college === "" ||
+            phoneNumber === "" ||
+            skills === "" ||
+            gender === "" ||
+            dob === "" ||
+            cgpa === "" ||
+            year === "" ||
+            address === ""
+        ){
+            alert(
+                "Please Fill All Fields"
+            );
+            return;
+        }
+        fetch(
+            "http://localhost:8081/students/register",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    name: studentName,
+                    email: studentEmail,
+                    password: password,
+                    degree: degree,
+                    department: department,
+                    college: college,
+                    phoneNumber: phoneNumber,
+                    skills: skills,
+                    gender: gender,
+                    dateOfBirth: dob,
+                    cgpa: cgpa,
+                    year_Of_PassedOut: year,
+                    address: address
+                })
+            }
+        )
+            .then(response => response.json())
+            .then(data => {
+                alert(
+                    "Student Registered Successfully"
+                );
+                window.location.href = "index.html";
+            });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="css/admin-login.css">
+</head>
+<body>
+<div class="main-container">
+    <div class="left-panel">
+        <h1>Admin Portal</h1>
+        <p>Manage students, applications and placements efficiently.</p>
+    </div>
+    <div class="right-panel">
+        <h1>Admin Login</h1>
+        <input type="text" id="username" placeholder="Enter Username">
+        <br><br>
+        <div class="password-wrapper">
+            <input type="password" id="password" placeholder="Enter Password">
+            <button class="eye-btn" onclick="togglePassword()" type="button" id="togglePassword">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </button>
+        </div>
+        <button class="login-btn" onclick="loginAdmin()">Login</button>
+    </div>
+</div>
+<script>
+    "use strict";
+    (function () {
+        if (localStorage.getItem("adminLogin") != null) {
+            window.location.replace("admin-dashboard.html");
+        }
+    })();
+    history.replaceState({ page: "admin-login" }, "", window.location.href);
+    window.addEventListener("pageshow", function (e) {
+        if (e.persisted && localStorage.getItem("adminLogin") != null) {
+            window.location.replace("admin-dashboard.html");
+        }
+    });
+    function loginAdmin() {
+        var username = document.getElementById("username").value.trim();
+        var password = document.getElementById("password").value.trim();
+        if (username === "") { alert("Please Enter Username"); return; }
+        if (password === "") { alert("Please Enter Password"); return; }
+        if (username !== "Admin") { alert("Incorrect Username"); return; }
+        if (password !== "Admin@2026") { alert("Incorrect Password"); return; }
+        fetch("http://localhost:8081/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: username, password: password })
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                localStorage.setItem("adminLogin", "true");
+                alert("Login Successful");
+                window.location.replace("admin-dashboard.html");
+            })
+            .catch(function (error) {
+                console.log(error);
+                alert("Server Error");
+            });
+    }
+    function togglePassword() {
+        var input    = document.getElementById("password");
+        var btn      = document.getElementById("togglePassword");
+        var isHidden = input.type === "password";
+        input.type   = isHidden ? "text" : "password";
+        btn.classList.toggle("active", isHidden);   // ← add this line
+    }
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") loginAdmin();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,537 @@
+/* ============================================
+   PLACEMENT MANAGEMENT SYSTEM — EARTHY WARM
+   Student Dashboard · Extended profile panel
+   Dark brown-black · amber-gold · DM Serif
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── TOKENS ── */
+:root {
+    --bg-deep:      #1a1208;
+    --bg-panel-l:   #241808;
+    --bg-panel-r:   #120e06;
+    --border-col:   #3d2a10;
+    --border-hover: #c87a20;
+    --accent-gold:  #c87a20;
+    --accent-light: #e8a830;
+    --text-heading: #f0d8a8;
+    --text-body:    #a07848;
+    --text-muted:   #4a3520;
+    --radius:       4px;
+    --transition:   0.22s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── BODY ── */
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-deep);
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    overflow: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+}
+
+/* ── VIGNETTE ── */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ══════════════════════════════════════
+   MAIN CONTAINER
+══════════════════════════════════════ */
+.main-container {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+}
+
+/* ══════════════════════════════════════
+   LEFT PANEL — scrollable profile
+══════════════════════════════════════ */
+.left-panel {
+    width: 380px;
+    flex-shrink: 0;
+    background: var(--bg-panel-l);
+    border-right: 1px solid var(--border-col);
+    padding: 48px 30px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    /* Panel scrolls independently */
+    overflow-y: auto;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+
+    animation: slideLeft 0.5s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+/* Left panel scrollbar */
+.left-panel::-webkit-scrollbar { width: 5px; }
+.left-panel::-webkit-scrollbar-track { background: transparent; }
+.left-panel::-webkit-scrollbar-thumb {
+    background: var(--border-col);
+    border-radius: 3px;
+}
+.left-panel::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+
+@keyframes slideLeft {
+    from { opacity: 0; transform: translateX(-18px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.left-panel > h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-heading);
+    line-height: 1.1;
+    flex-shrink: 0;
+}
+
+.left-panel > h1::after {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 2px;
+    background: var(--accent-gold);
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+/* ── STUDENT CARD ── */
+.student-card {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-col);
+    border-radius: 6px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gold top accent line */
+.student-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-gold), transparent 65%);
+    opacity: 0.6;
+}
+
+/* ── STUDENT NAME ── */
+.student-card h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--text-heading);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-col);
+    min-height: 1.5em;
+    line-height: 1.25;
+}
+
+/* ── DETAIL ROWS ── */
+.student-card p {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(61,42,16,0.3);
+    font-size: 0.8rem;
+    color: var(--text-body);
+    line-height: 1.5;
+}
+
+.student-card p:last-child {
+    border-bottom: none;
+}
+
+/* LABEL */
+.student-card p b {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 96px;
+    flex-shrink: 0;
+    line-height: 1.9;
+    font-style: normal;
+}
+
+/* VALUE */
+.student-card p span {
+    color: var(--text-body);
+    word-break: break-word;
+    white-space: normal;
+}
+
+/* CGPA — gold highlight */
+.student-card p:nth-child(9) span {
+    color: var(--text-body);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+/* Address — allow wrapping */
+.student-card p:last-child span {
+    white-space: normal;
+    line-height: 1.5;
+}
+
+/* ══════════════════════════════════════
+   RIGHT PANEL — dashboard actions
+══════════════════════════════════════ */
+.right-panel {
+    flex: 1;
+    background: var(--bg-panel-r);
+    padding: 52px 56px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 44px;
+    overflow-y: auto;
+    height: 100vh;
+    animation: slideRight 0.5s cubic-bezier(0.4,0,0.2,1) both;
+    animation-delay: 0.08s;
+}
+
+@keyframes slideRight {
+    from { opacity: 0; transform: translateX(18px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.right-panel > h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 400;
+    color: var(--text-heading);
+    line-height: 1.1;
+}
+
+.right-panel > h1::after {
+    content: '';
+    display: block;
+    width: 52px;
+    height: 2px;
+    background: var(--accent-gold);
+    margin-top: 12px;
+    opacity: 0.7;
+}
+
+/* ── DASHBOARD BUTTONS GRID ── */
+.dashboard-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    max-width: 540px;
+}
+
+.dashboard-buttons button {
+    padding: 30px 22px 22px;
+    background: var(--bg-panel-l);
+    border: 1px solid var(--border-col);
+    border-radius: 6px;
+    color: var(--text-heading);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.3;
+    position: relative;
+    overflow: hidden;
+    transition: border-color var(--transition),
+    background var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition),
+    color var(--transition);
+}
+
+/* Left accent bar */
+.dashboard-buttons button::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent-gold);
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+/* Arrow indicator */
+.dashboard-buttons button::after {
+    content: '→';
+    position: absolute;
+    bottom: 14px;
+    right: 16px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: color var(--transition), transform var(--transition);
+}
+
+.dashboard-buttons button:hover {
+    border-color: var(--border-hover);
+    background: rgba(36,24,8,0.95);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35),
+    0 0 0 1px rgba(200,122,32,0.08);
+    transform: translateY(-2px);
+    color: var(--accent-light);
+}
+
+.dashboard-buttons button:hover::before { opacity: 1; }
+
+.dashboard-buttons button:hover::after {
+    color: var(--accent-gold);
+    transform: translateX(4px);
+}
+
+.dashboard-buttons button:active {
+    transform: translateY(0);
+}
+
+/* Logout — red danger */
+.dashboard-buttons button:last-child {
+    color: var(--text-muted);
+    border-color: var(--border-col);
+}
+
+.dashboard-buttons button:last-child::before {
+    background: #e74c3c;
+}
+
+.dashboard-buttons button:last-child:hover {
+    border-color: #c0392b;
+    color: #e74c3c;
+    background: rgba(231,76,60,0.06);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+}
+
+.dashboard-buttons button:last-child:hover::after {
+    color: #e74c3c;
+}
+
+/* ── GLOBAL SCROLLBAR ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track {
+    background: var(--bg-deep);
+    border-left: 1px solid var(--border-col);
+}
+::-webkit-scrollbar-thumb {
+    background: #3d2a10;
+    border-radius: 4px;
+    border: 2px solid var(--bg-deep);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+::-webkit-scrollbar-corner { background: var(--bg-deep); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+    body { overflow: auto; flex-direction: column; }
+
+    .main-container { flex-direction: column; min-height: auto; }
+
+    .left-panel {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid var(--border-col);
+        padding: 36px 20px 40px;
+    }
+
+    .right-panel {
+        height: auto;
+        padding: 36px 20px 60px;
+        justify-content: flex-start;
+    }
+
+    .dashboard-buttons { max-width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .dashboard-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-buttons button {
+        padding: 22px 20px 18px;
+    }
+
+    .student-card p b {
+        min-width: 80px;
+    }
+}
+/* ══════════════════════════════════════
+   LOGOUT MODAL
+══════════════════════════════════════ */
+#modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+#modal-overlay.show {
+    display: flex;
+}
+
+#modal-box {
+    background: var(--bg-panel-l);
+    border: 1px solid var(--border-col);
+    border-radius: 6px;
+    padding: 36px 32px 28px;
+    width: 380px;
+    max-width: 92vw;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+    animation: modalPopIn 0.22s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Gold top accent line — matches student-card style */
+#modal-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-gold), transparent 65%);
+    opacity: 0.6;
+}
+
+@keyframes modalPopIn {
+    from { opacity: 0; transform: scale(0.9) translateY(12px); }
+    to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+#modal-box .modal-icon {
+    font-size: 36px;
+    margin-bottom: 14px;
+}
+
+#modal-box h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: var(--text-heading);
+    margin: 0 0 10px;
+}
+
+#modal-message {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    color: var(--text-body);
+    line-height: 1.7;
+    margin: 0 0 26px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+}
+
+#btn-stay {
+    flex: 1;
+    padding: 12px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-col);
+    border-radius: var(--radius);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-body);
+    cursor: pointer;
+    transition: border-color var(--transition),
+    color var(--transition),
+    background var(--transition);
+}
+
+#btn-stay:hover {
+    border-color: var(--border-hover);
+    color: var(--accent-light);
+    background: rgba(36, 24, 8, 0.95);
+}
+
+#btn-logout {
+    flex: 1;
+    padding: 12px;
+    background: rgba(231, 76, 60, 0.08);
+    border: 1px solid #c0392b;
+    border-radius: var(--radius);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e74c3c;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+}
+
+#btn-logout::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: #e74c3c;
+    opacity: 0.7;
+}
+
+#btn-logout:hover {
+    background: rgba(231, 76, 60, 0.16);
+    border-color: #e74c3c;
+    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.2);
+    transform: translateY(-1px);
+}
+
+#btn-logout:active {
+    transform: translateY(0);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+    #modal-box {
+        padding: 28px 20px 22px;
+    }
+    .modal-actions {
+        flex-direction: column;
+    }
+}
